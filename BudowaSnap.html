@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BudowaSnap">
+<meta name="theme-color" content="#0f0f0f">
+<title>BudowaSnap</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--surface:#181818;--surface2:#222;--surface3:#2a2a2a;
+  --border:#333;--border2:#444;--text:#f0ede8;--muted:#888;
+  --accent:#f5c842;--accent2:#e8a020;--green:#4caf82;--red:#e05c5c;--blue:#5b9cf6;
+  --r:10px;--r-sm:6px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
+.app{max-width:1100px;margin:0 auto;padding:20px 14px 60px;display:flex;flex-direction:column;gap:0;}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.logo{display:flex;align-items:center;gap:14px;}
+.logo-icon{width:46px;height:46px;background:var(--accent);border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-icon svg{color:#0f0f0f;width:24px;height:24px;}
+.logo-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+.logo-name span{color:var(--accent);}
+.logo-tag{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:2px;}
+.hdr-right{display:flex;gap:8px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{background:var(--surface3);}
+.btn:active{transform:scale(.98);}
+.btn.primary{background:var(--accent);color:#0f0f0f;border-color:var(--accent);font-weight:600;}
+.btn.primary:hover{background:var(--accent2);border-color:var(--accent2);}
+.btn.green{background:var(--green);color:#0f0f0f;border-color:var(--green);font-weight:600;}
+.btn.green:hover{filter:brightness(1.1);}
+.btn.large{padding:13px 20px;font-size:14px;border-radius:var(--r);width:100%;}
+.btn:disabled{opacity:.38;cursor:not-allowed;pointer-events:none;}
+.btn-sq{width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;font-size:16px;}
+.btn-sq:hover{color:var(--text);border-color:var(--border2);background:var(--surface2);}
+
+/* GRID */
+.grid-main{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start;}
+@media(max-width:720px){.grid-main{grid-template-columns:1fr;}}
+
+/* PANELS */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;}
+.panel:last-child{margin-bottom:0;}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sb{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#0f0f0f;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ph h2{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.pb{padding:18px;}
+
+/* FORM */
+.fg{margin-bottom:16px;position:relative;}
+.fg:last-child{margin-bottom:0;}
+label{display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:'DM Mono',monospace;}
+.iw{position:relative;}
+.iw input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px 10px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .15s;}
+.iw input:focus{border-color:var(--accent);}
+.iw input::placeholder{color:var(--muted);}
+.ii{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none;}
+
+/* SUGGESTIONS */
+.sug{position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:100;background:var(--surface3);border:1px solid var(--border2);border-radius:var(--r-sm);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;}
+.sug.open{display:block;}
+.si{padding:13px 14px;cursor:pointer;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px;transition:background .1s;border-bottom:1px solid var(--border);}
+.si:hover,.si.active{background:var(--surface2);}
+.si i{color:var(--muted);font-size:14px;}
+.si .m{color:var(--accent);}
+.se{padding:9px 14px;color:var(--muted);font-size:12px;font-style:italic;}
+
+/* UPLOAD */
+.uzone{border:2px dashed var(--border2);border-radius:var(--r);padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;}
+.uzone:hover,.uzone.drag{border-color:var(--accent);background:rgba(245,200,66,.04);}
+.uzone i{font-size:32px;color:var(--muted);margin-bottom:10px;display:block;}
+.uzone h3{font-size:14px;font-weight:600;margin-bottom:5px;font-family:'Syne',sans-serif;}
+.uzone p{font-size:11px;color:var(--muted);margin-bottom:14px;}
+.ubtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+input[type=file]{display:none;}
+
+/* GALLERY */
+.ghdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);}
+.ghdr h3{font-size:12px;font-weight:500;color:var(--muted);}
+.ghdr h3 span{color:var(--accent);font-weight:700;}
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;padding:12px 18px;max-height:280px;overflow-y:auto;}
+.ggrid::-webkit-scrollbar{width:3px;}
+.ggrid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.ti{position:relative;aspect-ratio:4/3;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border .15s;}
+.ti:hover{border-color:var(--border2);}
+.ti.sel{border-color:var(--accent);}
+.ti img{width:100%;height:100%;object-fit:cover;display:block;}
+.tdel{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.75);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;opacity:0;transition:opacity .15s;cursor:pointer;border:none;}
+.ti:hover .tdel{opacity:1;}
+.tdel:hover{background:var(--red)!important;}
+
+/* PREVIEW */
+.panel-right{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);}
+.pempty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 24px;text-align:center;color:var(--muted);gap:10px;}
+.pempty i{font-size:40px;opacity:.3;}
+.pempty p{font-size:12px;line-height:1.7;max-width:220px;}
+.pimg-wrap{position:relative;background:#000;overflow:hidden;}
+.pimg-wrap img{width:100%;display:block;max-height:360px;object-fit:contain;}
+.wmbar{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.72);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.wmtxt{font-family:'DM Mono',monospace;font-size:10px;color:#fff;letter-spacing:.04em;line-height:1.5;}
+.wmlogo{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:var(--accent);white-space:nowrap;}
+.pactions{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.pctr{font-size:11px;color:var(--muted);margin-left:auto;font-family:'DM Mono',monospace;}
+
+/* EXPORT */
+.ebox{padding:16px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
+.einfo{font-size:11px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;}
+
+/* INFO STRIP */
+.istrip{display:flex;align-items:flex-start;gap:10px;background:rgba(91,156,246,.08);border:1px solid rgba(91,156,246,.2);border-radius:var(--r-sm);padding:10px 12px;font-size:12px;color:#8ab8f5;line-height:1.6;}
+.istrip i{flex-shrink:0;margin-top:1px;font-size:14px;}
+
+/* MODAL */
+.mbg{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.mbg.open{opacity:1;pointer-events:all;}
+.mbox{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);width:100%;max-width:560px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;transform:scale(.96);transition:transform .2s;}
+.mbg.open .mbox{transform:scale(1);}
+.mhdr{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mhdr h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.mbody{flex:1;overflow-y:auto;padding:18px;}
+.mftr{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:460px){.dg{grid-template-columns:1fr;}}
+.ds h4{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-family:'DM Mono',monospace;margin-bottom:10px;}
+.dadd{display:flex;gap:6px;margin-bottom:10px;}
+.dadd input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+.dadd input:focus{border-color:var(--accent);}
+.dlist{list-style:none;}
+.dli{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dli:last-child{border-bottom:none;}
+.ddel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px;border-radius:3px;transition:all .1s;}
+.ddel:hover{color:var(--red);background:rgba(224,92,92,.12);}
+
+/* PROGRESS */
+.ptrack{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin:10px 0;}
+.pfill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s ease;width:0%;}
+.clog{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);max-height:240px;overflow-y:auto;margin-top:10px;line-height:1.8;}
+.ll{display:flex;gap:10px;}
+.lts{color:var(--border2);}
+.lok{color:var(--green);}
+.lwarn{color:var(--accent);}
+.lerr{color:var(--red);}
+.linfo{color:var(--blue);}
+
+/* TOAST */
+.tarea{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--surface3);border:1px solid var(--border2);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;pointer-events:all;animation:sIn .25s ease;max-width:280px;}
+.toast.ok{border-left:3px solid var(--green);}
+.toast.err{border-left:3px solid var(--red);}
+.toast.info{border-left:3px solid var(--accent);}
+@keyframes sIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="hdr">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">Budowa<span>Snap</span></div>
+        <div class="logo-tag">DOKUMENTACJA BUDOWLANA // v2.1</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <button class="btn-sq" id="btn-dict" title="Słowniki"><i class="ti ti-database"></i></button>
+      <button class="btn-sq" id="btn-help" title="Konfiguracja Google Drive"><i class="ti ti-settings"></i></button>
+    </div>
+  </header>
+
+  <div class="grid-main">
+
+    <!-- LEFT -->
+    <div>
+      <div class="panel">
+        <div class="ph"><div class="sb">1</div><h2>Metadane zdjęć</h2></div>
+        <div class="pb">
+          <div class="fg">
+            <label>Adres budowy</label>
+            <div class="iw">
+              <i class="ti ti-map-pin ii"></i>
+              <input type="text" id="inp-budowa" placeholder="np. ul. Kowalska 12, Warszawa" autocomplete="off">
+            </div>
+            <div class="sug" id="sug-budowa"></div>
+          </div>
+          <div class="fg">
+            <label>Osoba sporządzająca</label>
+            <div class="iw">
+              <i class="ti ti-user ii"></i>
+              <input type="text" id="inp-inspektor" placeholder="np. Jan Kowalski" autocomplete="off">
+            </div>
+            <div class="sug" id="sug-inspektor"></div>
+          </div>
+          <div class="fg">
+            <label>Opis / etap (opcjonalnie)</label>
+            <div class="iw">
+              <i class="ti ti-notes ii"></i>
+              <input type="text" id="inp-opis" placeholder="np. Fundamenty – szalunek" autocomplete="off">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><div class="sb">2</div><h2>Dodaj zdjęcia</h2></div>
+        <div class="pb">
+          <div class="uzone" id="drop-zone">
+            <i class="ti ti-photo-up"></i>
+            <h3>Przeciągnij lub wybierz</h3>
+            <p>JPG, PNG, HEIC – bez limitu</p>
+            <div class="ubtns">
+              <button class="btn" id="btn-gal"><i class="ti ti-photo"></i> Z galerii</button>
+              <button class="btn primary" id="btn-cam"><i class="ti ti-camera"></i> Zrób zdjęcie</button>
+            </div>
+          </div>
+          <input type="file" id="fg" multiple accept="image/*">
+          <input type="file" id="fc" accept="image/*" capture="environment">
+        </div>
+        <div id="gw" class="hidden">
+          <div class="ghdr">
+            <h3>Wgrane: <span id="pc">0</span></h3>
+            <button class="btn" style="font-size:11px;padding:4px 9px;" id="btn-clr"><i class="ti ti-trash"></i> Wyczyść</button>
+          </div>
+          <div class="ggrid" id="pg"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><div class="sb">3</div><h2>Eksport</h2></div>
+        <div class="ebox">
+          <button class="btn green large" id="btn-zip" disabled><i class="ti ti-download"></i> Pobierz wszystkie (.zip)</button>
+          <button class="btn large" id="btn-gdrive" disabled style="gap:10px;">
+            <svg width="18" height="18" viewBox="0 0 87.3 78" fill="currentColor">
+              <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+              <path d="M43.65 25L29.9 1.2C28.55 2 27.4 3.1 26.6 4.5L1.2 48.5C.4 49.9 0 51.45 0 53h27.5z" fill="#00ac47"/>
+              <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.65z" fill="#ea4335"/>
+              <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.95 0H34.35c-1.55 0-3.1.45-4.45 1.2z" fill="#00832d"/>
+              <path d="M59.8 53H27.5L13.75 76.8c1.35.8 2.9 1.2 4.45 1.2h50.9c1.55 0 3.1-.4 4.45-1.2z" fill="#2684fc"/>
+              <path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+            </svg>
+            Wyślij na Google Drive
+          </button>
+          <div class="einfo" id="einfo">Wgraj zdjęcia aby odblokować eksport</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: PREVIEW -->
+    <div class="panel-right">
+      <div class="ph"><div class="sb" style="background:var(--surface3);color:var(--muted);">👁</div><h2>Podgląd znaku wodnego</h2></div>
+      <div class="pempty" id="pem">
+        <i class="ti ti-photo-off"></i>
+        <p>Wgraj zdjęcia i kliknij miniaturkę, aby zobaczyć podgląd ze znakiem wodnym</p>
+      </div>
+      <div class="hidden" id="pac">
+        <div class="pimg-wrap">
+          <img id="pimg" alt="Podgląd">
+          <div class="wmbar">
+            <div class="wmtxt">
+              <div id="wl1"></div>
+              <div id="wl2"></div>
+            </div>
+            <div class="wmlogo">Budowa<span style="color:#fff">Snap</span></div>
+          </div>
+        </div>
+        <div class="pactions">
+          <button class="btn" id="btn-dl1"><i class="ti ti-download"></i> To zdjęcie</button>
+          <button class="btn-sq" id="btn-prev"><i class="ti ti-chevron-left"></i></button>
+          <button class="btn-sq" id="btn-next"><i class="ti ti-chevron-right"></i></button>
+          <span class="pctr" id="pctr"></span>
+        </div>
+      </div>
+      <div style="padding:14px 18px;border-top:1px solid var(--border);">
+        <div class="istrip">
+          <i class="ti ti-info-circle"></i>
+          <span>Kliknij <strong>⚙</strong> aby skonfigurować Google Drive. Aplikacja musi być otwarta jako lokalny plik (nie przez iframe) żeby Drive działał.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="tarea" id="ta"></div>
+
+<!-- DICT MODAL -->
+<div class="mbg" id="md-dict">
+  <div class="mbox" style="max-width:500px;">
+    <div class="mhdr"><h3><i class="ti ti-database" style="color:var(--accent);margin-right:8px;"></i>Słowniki autouzupełniania</h3><button class="btn-sq" id="c-dict"><i class="ti ti-x"></i></button></div>
+    <div class="mbody"><div class="dg">
+      <div class="ds">
+        <h4>Adresy budów</h4>
+        <div class="dadd"><input type="text" id="nb" placeholder="Nowy adres..."><button class="btn primary btn-sq" id="ab"><i class="ti ti-plus"></i></button></div>
+        <ul class="dlist" id="lb"></ul>
+      </div>
+      <div class="ds">
+        <h4>Osoby / Inspektorzy</h4>
+        <div class="dadd"><input type="text" id="ni" placeholder="Imię i nazwisko..."><button class="btn primary btn-sq" id="ai"><i class="ti ti-plus"></i></button></div>
+        <ul class="dlist" id="li"></ul>
+      </div>
+    </div></div>
+    <div class="mftr"><button class="btn" id="c-dict2">Zamknij</button></div>
+  </div>
+</div>
+
+<!-- HELP / CONFIG MODAL -->
+<div class="mbg" id="md-help">
+  <div class="mbox" style="max-width:540px;">
+    <div class="mhdr"><h3>⚙ Konfiguracja Google Drive</h3><button class="btn-sq" id="c-help"><i class="ti ti-x"></i></button></div>
+    <div class="mbody" style="font-size:13px;line-height:1.8;color:var(--muted);">
+      <p style="color:var(--text);font-weight:500;margin-bottom:12px;">Jak skonfigurować wysyłkę na Dysk Google:</p>
+      <ol style="padding-left:16px;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+        <li>Przejdź na <strong style="color:var(--accent)">script.google.com</strong> → nowy projekt</li>
+        <li>Wklej kod poniżej (kliknij "Kopiuj kod")</li>
+        <li>Kliknij <em>Wdróż → Nowe wdrożenie</em> → typ: <em>Aplikacja internetowa</em></li>
+        <li>Dostęp: <strong style="color:var(--text)">Wszyscy (anonimowi)</strong> → kliknij Wdróż</li>
+        <li>Skopiuj URL wdrożenia i wklej poniżej</li>
+        <li><strong style="color:var(--text)">WAŻNE:</strong> Otwórz BudowaSnap.html jako lokalny plik (nie przez Claude/iframe)</li>
+      </ol>
+
+      <div style="background:var(--surface2);border-radius:var(--r-sm);padding:12px;font-family:'DM Mono',monospace;font-size:10.5px;color:#8ab8f5;border:1px solid var(--border);margin-bottom:14px;white-space:pre-wrap;">function doPost(e) {
+  try {
+    var d = JSON.parse(e.postData.contents);
+    var folder = getOrCreateFolder(d.folder);
+    var blob = Utilities.newBlob(
+      Utilities.base64Decode(d.data), d.mime, d.name
+    );
+    folder.createFile(blob);
+    return out({ok: true});
+  } catch(err) {
+    return out({ok: false, error: err.message});
+  }
+}
+function doGet(e) { return out({ok: true, ping: "pong"}); }
+function out(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+function getOrCreateFolder(name) {
+  var root = DriveApp.getRootFolder();
+  var it = root.getFoldersByName(name);
+  return it.hasNext() ? it.next() : root.createFolder(name);
+}</div>
+
+      <button class="btn primary" style="margin-bottom:14px;" onclick="
+        const code=document.querySelector('#md-help pre, #md-help .gs-code').innerText||document.querySelector('#md-help [style*=monospace]').innerText;
+        navigator.clipboard.writeText(code.trim()).then(()=>{this.textContent='✓ Skopiowano!';setTimeout(()=>{this.innerHTML='<i class=ti ti-copy></i> Kopiuj kod';},2000);});
+      "><i class="ti ti-copy"></i> Kopiuj kod</button>
+
+      <div>
+        <label style="display:block;font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-family:'DM Mono',monospace;margin-bottom:6px;">URL wdrożenia Apps Script</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="surl" placeholder="https://script.google.com/macros/s/..." style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;outline:none;">
+          <button class="btn primary" id="save-url"><i class="ti ti-check"></i> Zapisz</button>
+        </div>
+        <div id="url-status" style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;"></div>
+      </div>
+    </div>
+    <div class="mftr"><button class="btn" id="c-help2">Zamknij</button></div>
+  </div>
+</div>
+
+<!-- PROGRESS MODAL -->
+<div class="mbg" id="md-prog">
+  <div class="mbox" style="max-width:460px;">
+    <div class="mhdr"><h3 id="ptitle">Przetwarzanie...</h3><button class="btn-sq" id="c-prog"><i class="ti ti-x"></i></button></div>
+    <div class="mbody">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px;">
+        <span id="plabel">Przygotowanie...</span><span id="ppct">0%</span>
+      </div>
+      <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+      <div class="clog" id="clog"></div>
+    </div>
+    <div class="mftr"><button class="btn hidden" id="done-prog">Gotowe ✓</button></div>
+  </div>
+</div>
+
+<canvas id="wmc" style="display:none;"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// ── STORAGE ──
+const LS={
+  get:(k,d)=>{try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch{return d}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+};
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzII2dDbfboPiOgj2Hx5croYsHjsHScUjwRYeSHzhHjpC2L4BB-zpHi5IgwHPNSIplgxg/exec';
+let DB={
+  budowy:LS.get('bs_b',[]),
+  inspektorzy:LS.get('bs_i',[]),
+  scriptUrl:SCRIPT_URL
+};
+const saveDB=()=>{LS.set('bs_b',DB.budowy);LS.set('bs_i',DB.inspektorzy);LS.set('bs_url',DB.scriptUrl);};
+
+// ── STATE ──
+let photos=[],selIdx=-1;
+const $=id=>document.getElementById(id);
+
+// ── TOAST ──
+function toast(msg,type='info',dur=3200){
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  const ic=type==='ok'?'check':type==='err'?'alert-triangle':'info-circle';
+  t.innerHTML=`<i class="ti ti-${ic}"></i><span>${msg}</span>`;
+  $('ta').appendChild(t);
+  setTimeout(()=>{t.style.transition='all .3s';t.style.opacity='0';t.style.transform='translateX(14px)';setTimeout(()=>t.remove(),300);},dur);
+}
+
+// ── DATE ──
+function fmtDate(){
+  const n=new Date();
+  const p=x=>String(x).padStart(2,'0');
+  return{
+    date:`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`,
+    time:`${p(n.getHours())}:${p(n.getMinutes())}`,
+    full:`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}`
+  };
+}
+
+// ── AUTOCOMPLETE ──
+function setupAC(inpId,sugId,dbKey){
+  const inp=$(inpId),sug=$(sugId);
+  let idx=-1,picking=false;
+
+  const close=()=>{sug.classList.remove('open');idx=-1;picking=false;};
+
+  const pick=(val)=>{inp.value=val;close();updateWM();inp.blur();};
+
+  const render=q=>{
+    const list=DB[dbKey]||[];
+    if(!list.length){sug.classList.remove('open');return;}
+    const q2=(q||'').toLowerCase();
+    const hits=q2?list.filter(x=>x.toLowerCase().includes(q2)):list;
+    if(!hits.length){sug.classList.remove('open');return;}
+    const ico=dbKey==='budowy'?'map-pin':'user';
+    sug.innerHTML=hits.map(x=>{
+      const esc=x.replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+      const hi=q2?esc.replace(new RegExp(q2.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<span class="m">${m}</span>`):esc;
+      return `<div class="si" data-v="${x.replace(/"/g,'&quot;')}"><i class="ti ti-${ico}"></i><span>${hi}</span></div>`;
+    }).join('');
+    sug.classList.add('open');
+
+    sug.querySelectorAll('.si').forEach(el=>{
+      // desktop
+      el.addEventListener('mousedown',e=>{e.preventDefault();pick(el.dataset.v);});
+      // mobile – touchstart fires before blur
+      el.addEventListener('touchstart',e=>{e.preventDefault();picking=true;pick(el.dataset.v);},{passive:false});
+    });
+  };
+
+  inp.addEventListener('input',()=>render(inp.value));
+  inp.addEventListener('focus',()=>render(inp.value));
+  // dłuższy timeout żeby touchstart zdążył zadziałać przed blur
+  inp.addEventListener('blur',()=>setTimeout(()=>{if(!picking)close();},300));
+
+  inp.addEventListener('keydown',e=>{
+    const its=sug.querySelectorAll('.si');
+    if(e.key==='ArrowDown'){idx=Math.min(idx+1,its.length-1);its.forEach((x,i)=>x.classList.toggle('active',i===idx));e.preventDefault();}
+    else if(e.key==='ArrowUp'){idx=Math.max(idx-1,0);its.forEach((x,i)=>x.classList.toggle('active',i===idx));e.preventDefault();}
+    else if(e.key==='Enter'&&idx>=0){pick(its[idx].dataset.v);}
+    else if(e.key==='Escape')close();
+  });
+}
+setupAC('inp-budowa','sug-budowa','budowy');
+setupAC('inp-inspektor','sug-inspektor','inspektorzy');
+$('inp-opis').addEventListener('input',updateWM);
+
+// ── WATERMARK TEXT UPDATE ──
+function updateWM(){
+  const b=$('inp-budowa').value.trim();
+  const ins=$('inp-inspektor').value.trim();
+  const op=$('inp-opis').value.trim();
+  const{full}=fmtDate();
+  $('wl1').textContent=(b||'(brak adresu)')+(ins?' | '+ins:'');
+  $('wl2').textContent=(op?op+' | ':'')+full;
+  if(selIdx>=0)showPreview(selIdx);
+}
+
+// ── CANVAS WATERMARK ──
+function renderWM(src,cb){
+  const b=$('inp-budowa').value.trim()||'(brak adresu)';
+  const ins=$('inp-inspektor').value.trim();
+  const op=$('inp-opis').value.trim();
+  const{full}=fmtDate();
+  const l1=b+(ins?' | '+ins:'');
+  const l2=(op?op+' | ':'')+full;
+  const img=new Image();
+  img.onload=()=>{
+    const c=$('wmc');
+    const W=img.naturalWidth,H=img.naturalHeight;
+    c.width=W;c.height=H;
+    const ctx=c.getContext('2d');
+    ctx.drawImage(img,0,0);
+    const bH=Math.round(H*0.09);
+    const fS=Math.round(bH*0.3);
+    ctx.fillStyle='rgba(0,0,0,0.72)';
+    ctx.fillRect(0,H-bH,W,bH);
+    ctx.fillStyle='#ffffff';
+    const font=`500 ${fS}px "DM Mono",monospace`;
+    ctx.font=font;
+    const pad=Math.round(W*0.016);
+    const lH=Math.round(fS*1.6);
+    const baseY=H-bH+Math.round((bH-lH*2)/2)+fS;
+    ctx.fillText(l1,pad,baseY,W*0.75);
+    ctx.fillText(l2,pad,baseY+lH,W*0.75);
+    ctx.fillStyle='#f5c842';
+    const logoF=`700 ${Math.round(fS*1.15)}px Syne,sans-serif`;
+    ctx.font=logoF;
+    const lw=ctx.measureText('BudowaSnap').width;
+    const logoX=W-lw-pad*2;
+    const logoY=H-bH+Math.round(bH/2)+Math.round(fS*0.4);
+    ctx.fillText('Budowa',logoX,logoY);
+    ctx.fillStyle='#ffffff';
+    const bw=ctx.measureText('Budowa').width;
+    ctx.fillText('Snap',logoX+bw,logoY);
+    cb(c.toDataURL('image/jpeg',0.92));
+  };
+  img.src=src;
+}
+
+// ── PHOTO MANAGEMENT ──
+function addPhotos(files){
+  Array.from(files).forEach(f=>{
+    if(!f.type.startsWith('image/'))return;
+    const r=new FileReader();
+    r.onload=e=>{
+      photos.push({src:e.target.result,name:f.name});
+      refreshGallery();
+      if(photos.length===1)selectPhoto(0);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function refreshGallery(){
+  const g=$('pg');g.innerHTML='';
+  photos.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='ti'+(i===selIdx?' sel':'');
+    d.innerHTML=`<img src="${p.src}" alt=""><button class="tdel" data-i="${i}" title="Usuń"><i class="ti ti-x"></i></button>`;
+    d.querySelector('img').addEventListener('click',()=>selectPhoto(i));
+    d.querySelector('.tdel').addEventListener('click',e=>{e.stopPropagation();removePhoto(i);});
+    g.appendChild(d);
+  });
+  $('pc').textContent=photos.length;
+  $('gw').classList.toggle('hidden',photos.length===0);
+  $('btn-zip').disabled=photos.length===0;
+  $('btn-gdrive').disabled=photos.length===0;
+  $('einfo').textContent=photos.length?`${photos.length} zdjęcie(i) gotowe`:'Wgraj zdjęcia aby odblokować eksport';
+  if(!photos.length){$('pem').classList.remove('hidden');$('pac').classList.add('hidden');selIdx=-1;}
+}
+
+function removePhoto(i){
+  photos.splice(i,1);
+  if(selIdx>=photos.length)selIdx=photos.length-1;
+  refreshGallery();
+  if(photos.length>0)selectPhoto(selIdx);
+}
+
+function selectPhoto(i){
+  selIdx=i;
+  refreshGallery();
+  showPreview(i);
+  $('pctr').textContent=`${i+1} / ${photos.length}`;
+}
+
+function showPreview(i){
+  const p=photos[i];if(!p)return;
+  $('pem').classList.add('hidden');
+  $('pac').classList.remove('hidden');
+  $('pimg').src=p.src;
+  updateWM();
+}
+
+$('btn-prev').addEventListener('click',()=>{if(selIdx>0)selectPhoto(selIdx-1);});
+$('btn-next').addEventListener('click',()=>{if(selIdx<photos.length-1)selectPhoto(selIdx+1);});
+
+// FILE INPUTS
+$('drop-zone').addEventListener('click',e=>{if(!e.target.closest('button'))$('fg').click();});
+$('btn-gal').addEventListener('click',e=>{e.stopPropagation();$('fg').click();});
+$('btn-cam').addEventListener('click',e=>{e.stopPropagation();$('fc').click();});
+$('fg').addEventListener('change',e=>{addPhotos(e.target.files);e.target.value='';});
+$('fc').addEventListener('change',e=>{addPhotos(e.target.files);e.target.value='';});
+
+const dz=$('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');addPhotos(e.dataTransfer.files);});
+$('btn-clr').addEventListener('click',()=>{photos=[];selIdx=-1;refreshGallery();});
+
+// FILENAME
+function mkName(i){
+  const b=($('inp-budowa').value.trim()||'budowa').replace(/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]/g,'_').replace(/\s+/g,'_').slice(0,35);
+  const{date}=fmtDate();
+  const orig=photos[i].name.replace(/\.[^.]+$/,'');
+  return `${b}_${date}_${String(i+1).padStart(3,'0')}_${orig}.jpg`;
+}
+function mkFolder(){
+  return ($('inp-budowa').value.trim()||'Budowa').replace(/[/\\:*?"<>|]/g,'_').slice(0,60);
+}
+function autoSave(){
+  const b=$('inp-budowa').value.trim();
+  const ins=$('inp-inspektor').value.trim();
+  let changed=false;
+  if(b&&!DB.budowy.includes(b)){DB.budowy.unshift(b);changed=true;}
+  if(ins&&!DB.inspektorzy.includes(ins)){DB.inspektorzy.unshift(ins);changed=true;}
+  if(changed){saveDB();toast('Zapisano do słownika ✓','ok',2000);}
+}
+
+// PROGRESS HELPERS
+function openProg(title){
+  $('ptitle').textContent=title;
+  $('clog').innerHTML='';
+  $('pfill').style.width='0%';
+  $('ppct').textContent='0%';
+  $('plabel').textContent='Przygotowanie...';
+  $('done-prog').classList.add('hidden');
+  $('md-prog').classList.add('open');
+}
+function setProg(pct,label){
+  $('pfill').style.width=`${pct}%`;
+  $('ppct').textContent=`${Math.round(pct)}%`;
+  if(label)$('plabel').textContent=label;
+}
+function logLine(msg,cls=''){
+  const n=new Date();
+  const ts=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+  const d=document.createElement('div');d.className='ll';
+  d.innerHTML=`<span class="lts">[${ts}]</span><span class="${cls}"> ${msg}</span>`;
+  const cl=$('clog');cl.appendChild(d);cl.scrollTop=cl.scrollHeight;
+}
+function doneProg(){$('done-prog').classList.remove('hidden');setProg(100,'Gotowe!');}
+$('c-prog').addEventListener('click',()=>$('md-prog').classList.remove('open'));
+$('done-prog').addEventListener('click',()=>$('md-prog').classList.remove('open'));
+
+// DOWNLOAD ONE
+$('btn-dl1').addEventListener('click',()=>{
+  if(selIdx<0)return;
+  renderWM(photos[selIdx].src,url=>{
+    const a=document.createElement('a');a.href=url;a.download=mkName(selIdx);a.click();
+    toast('Pobrano zdjęcie','ok');
+  });
+});
+
+// ZIP ALL
+$('btn-zip').addEventListener('click',async()=>{
+  if(!photos.length)return;
+  autoSave();
+  const folder=mkFolder();
+  openProg(`ZIP – ${photos.length} zdjęć`);
+  logLine(`Folder: ${folder}`,'linfo');
+  const zip=new JSZip();
+  const sub=zip.folder(folder);
+  for(let i=0;i<photos.length;i++){
+    setProg((i+1)/photos.length*85,`Znakuję ${i+1}/${photos.length}`);
+    logLine(`→ ${photos[i].name}`,'lwarn');
+    await new Promise(res=>{renderWM(photos[i].src,url=>{sub.file(mkName(i),url.split(',')[1],{base64:true});res();});});
+    await new Promise(r=>setTimeout(r,15));
+  }
+  logLine('Pakowanie ZIP...','linfo');setProg(92,'Pakowanie...');
+  const blob=await zip.generateAsync({type:'blob'});
+  const{date}=fmtDate();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${folder}_${date}.zip`;a.click();
+  logLine(`✓ ZIP gotowy`,'lok');doneProg();toast('ZIP pobrany!','ok');
+});
+
+// GOOGLE DRIVE
+$('btn-gdrive').addEventListener('click',async()=>{
+  const url=SCRIPT_URL;
+  if(!photos.length)return;
+  autoSave();
+  const folder=mkFolder();
+  openProg(`Google Drive – ${photos.length} zdjęć`);
+  logLine(`Cel: Drive/${folder}`,'linfo');
+  logLine(`URL: ${url.slice(0,55)}...`,'linfo');
+  let ok=0,err=0;
+  for(let i=0;i<photos.length;i++){
+    setProg((i+1)/photos.length*90,`Wysyłam ${i+1}/${photos.length}`);
+    const fn=mkName(i);
+    logLine(`→ ${fn}`,'lwarn');
+    try{
+      const dataUrl=await new Promise(res=>renderWM(photos[i].src,res));
+      const b64=dataUrl.split(',')[1];
+      const res=await fetch(url,{
+        method:'POST',
+        body:JSON.stringify({folder,name:fn,data:b64,mime:'image/jpeg'}),
+      });
+      const j=await res.json();
+      if(j.ok){logLine(`✓ ${fn}`,'lok');ok++;}
+      else{logLine(`✗ Błąd: ${j.error||'nieznany'}`,'lerr');err++;}
+    }catch(e){
+      logLine(`✗ Błąd: ${e.message}`,'lerr');
+      err++;
+    }
+    await new Promise(r=>setTimeout(r,300));
+  }
+  doneProg();
+  logLine(`Wynik: ${ok} OK, ${err} błędów`,err?'lerr':'lok');
+  toast(err===0?`✓ ${ok} zdjęć na Drive!`:`${ok} OK, ${err} błędów`,(err===0?'ok':'err'));
+});
+
+// DICT MODAL
+$('btn-dict').addEventListener('click',()=>{renderDicts();$('md-dict').classList.add('open');});
+['c-dict','c-dict2'].forEach(id=>$(id).addEventListener('click',()=>$('md-dict').classList.remove('open')));
+
+function renderDicts(){
+  [['budowy','lb'],['inspektorzy','li']].forEach(([key,listId])=>{
+    const ul=$(listId);ul.innerHTML='';
+    (DB[key]||[]).forEach((item,i)=>{
+      const li=document.createElement('li');li.className='dli';
+      li.innerHTML=`<span>${item}</span><button class="ddel" data-k="${key}" data-i="${i}"><i class="ti ti-x"></i></button>`;
+      ul.appendChild(li);
+    });
+  });
+  document.querySelectorAll('.ddel').forEach(b=>{
+    b.addEventListener('click',()=>{DB[b.dataset.k].splice(+b.dataset.i,1);saveDB();renderDicts();toast('Usunięto','info');});
+  });
+}
+function addDict(key,inpId){
+  const inp=$(inpId),val=inp.value.trim();
+  if(!val)return;
+  if(DB[key].includes(val)){toast('Już istnieje','info');return;}
+  DB[key].unshift(val);saveDB();inp.value='';renderDicts();toast('Dodano','ok');
+}
+$('ab').addEventListener('click',()=>addDict('budowy','nb'));
+$('ai').addEventListener('click',()=>addDict('inspektorzy','ni'));
+$('nb').addEventListener('keydown',e=>{if(e.key==='Enter')addDict('budowy','nb');});
+$('ni').addEventListener('keydown',e=>{if(e.key==='Enter')addDict('inspektorzy','ni');});
+
+// HELP MODAL
+$('btn-help').addEventListener('click',()=>{$('surl').value=DB.scriptUrl||'';$('url-status').textContent=DB.scriptUrl?'✓ URL zapisany':'';$('md-help').classList.add('open');});
+['c-help','c-help2'].forEach(id=>$(id).addEventListener('click',()=>$('md-help').classList.remove('open')));
+$('save-url').addEventListener('click',()=>{
+  const u=$('surl').value.trim();
+  if(!u||!u.startsWith('https://')){toast('Podaj prawidłowy URL (https://)','err');return;}
+  DB.scriptUrl=u;saveDB();
+  $('url-status').textContent='✓ URL zapisany i zapamiętany';
+  toast('URL zapisany!','ok');
+  $('md-help').classList.remove('open');
+});
+
+// TEST URL
+async function testUrl(){
+  const u=$('surl').value.trim();
+  if(!u)return;
+  try{
+    const r=await fetch(u);
+    const j=await r.json();
+    $('url-status').textContent=j.ok?'✓ Połączenie działa!':'⚠ Odpowiedź nieoczekiwana';
+  }catch(e){
+    $('url-status').textContent='✗ Błąd – sprawdź URL i uprawnienia wdrożenia';
+  }
+}
+
+// CLOSE ON OVERLAY
+document.querySelectorAll('.mbg').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+
+updateWM();
+</script>
+
+<script>
+// INSTALL PROMPT (Android Chrome)
+let _dp=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();_dp=e;
+  const b=document.createElement('div');
+  b.id='ipwa';
+  b.innerHTML=`<div style="position:fixed;bottom:76px;left:50%;transform:translateX(-50%);z-index:3000;background:#181818;border:1px solid #444;border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.65);max-width:320px;width:calc(100% - 32px);">
+    <div style="background:#f5c842;border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-camera" style="font-size:20px;color:#0f0f0f;"></i></div>
+    <div style="flex:1;"><div style="font-weight:600;font-size:13px;color:#f0ede8;">Dodaj do ekranu głównego</div><div style="font-size:11px;color:#888;margin-top:1px;">Otwieraj jak aplikację</div></div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <button onclick="(async()=>{if(!_dp)return;_dp.prompt();await _dp.userChoice;_dp=null;document.getElementById('ipwa').remove();})()" style="background:#f5c842;color:#0f0f0f;border:none;border-radius:6px;padding:7px 11px;font-size:12px;font-weight:600;cursor:pointer;">Dodaj</button>
+      <button onclick="document.getElementById('ipwa').remove()" style="background:transparent;color:#888;border:1px solid #444;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;">Nie teraz</button>
+    </div>
+  </div>`;
+  document.body.appendChild(b);
+});
+window.addEventListener('appinstalled',()=>{const b=document.getElementById('ipwa');if(b)b.remove();});
+</script>
+</body>
+</html>
